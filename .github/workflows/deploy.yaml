@@ -1,0 +1,8 @@
+name: CICD with Terraform
+on:
+  push:
+    branches:
+      - ""
+
+env:
+  AWS_ACCESS_KEY_ID: $
