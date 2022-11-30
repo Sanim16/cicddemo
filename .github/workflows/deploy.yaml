@@ -17,6 +17,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        run: echo "This step will be skipped on Monday and Wednesday"
+        #run: echo "This step will be skipped on Monday and Wednesday"
       - name: Every time
         run: echo "This step will always run"
