@@ -67,6 +67,9 @@ resource "aws_security_group" "cicd-demo-sg" {
     protocol = "tcp"
     self = false
     to_port = 22
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    security_groups  = []
   },
   {
     description      = "HTTP from everywhere"
@@ -74,6 +77,10 @@ resource "aws_security_group" "cicd-demo-sg" {
     to_port          = 80
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = []
+    prefix_list_ids  = []
+    security_groups  = []
+    self = false
   },
   {
     description      = "HTTPS from everywhere"
