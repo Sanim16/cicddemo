@@ -31,7 +31,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |-
-          terraform plan -destroy \
+          terraform plan \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
@@ -43,8 +43,9 @@ jobs:
         working-directory: ./terraform
       - name: Set Output
         id: set-ip
-        run: |-
-          echo "::set-output name=web_server_public_ip::$(terraform output web_server_public_ip)"
+        # run: |-
+        #   echo "::set-output name=web_server_public_ip::$(terraform output web_server_public_ip)"
+        run: echo "SERVER_PUBLIC_IP=$(terraform output web_server_public_ip)" >> $GITHUB_ENV
         working-directory: ./terraform
       - name: Print the input tag to STDOUT
         run: echo The tag is $SERVER_PUBLIC_IP
