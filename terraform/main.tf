@@ -108,29 +108,30 @@ resource "aws_security_group" "cicd-demo-sg" {
 
 resource "aws_iam_instance_profile" "cicddemo_ecr_profile" {
     name = "cicddemo_ecr_profile"  
-    role = aws_iam_role.role.name
+    #role = aws_iam_role.role.name
+    role = "cicd_demo_policy_for_ecr"
 }
 
-resource "aws_iam_role" "role" {
-  name = "test_role"
-  path = "/"
+# resource "aws_iam_role" "role" {
+#   name = "test_role"
+#   path = "/"
 
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ecr-public:*",
-                "sts:GetServiceBearerToken"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
+#   assume_role_policy = <<EOF
+# {
+#     "Version": "2012-10-17",
+#     "Statement": [
+#         {
+#             "Effect": "Allow",
+#             "Action": [
+#                 "ecr-public:*",
+#                 "sts:GetServiceBearerToken"
+#             ],
+#             "Resource": "*"
+#         }
+#     ]
+# }
+# EOF
+# }
 
 output "web_server_public_ip" {
   value = aws_instance.web_server.public_ip
