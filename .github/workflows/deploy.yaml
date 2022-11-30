@@ -75,7 +75,8 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./nodeapp
       - name: Print the input tag to STDOUT
-        run: echo  The tags are ${{ env.SERVER_PUBLIC_IP }}
+        run: echo The tag is $SERVER_PUBLIC_IP
+        # run: echo  The tags are ${{ env.SERVER_PUBLIC_IP }}
       - name: Deploy Docker Image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
