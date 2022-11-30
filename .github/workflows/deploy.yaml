@@ -31,7 +31,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |-
-          terraform plan -destroy \
+          terraform plan \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
@@ -70,6 +70,8 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./nodeapp
+      - name: Print the input tag to STDOUT
+        run: echo  The tags are ${{ env.SERVER_PUBLIC_IP }}
       - name: Deploy Docker Image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -78,7 +80,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
         uses: appleboy/ssh-action@master
         with:
-          host: "3.236.75.24"
+          host: ${{ env.SERVER_PUBLIC_IP }}
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
           envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
