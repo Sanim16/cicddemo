@@ -16,7 +16,7 @@ jobs:
   deploy-infra:
     runs-on: ubuntu-latest
     outputs:
-      SERVER_PUBLIC_IP: ${{ steps.set-ip.web_server_public_ip}}
+      SERVER_PUBLIC_IP: ${{ steps.set-ip.web_server_public_ip }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,7 +31,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |-
-          terraform plan \
+          terraform plan -destroy \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
