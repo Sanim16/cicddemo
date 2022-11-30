@@ -122,20 +122,8 @@ resource "aws_iam_role" "role" {
         {
             "Effect": "Allow",
             "Action": [
-                "ecr-public:GetAuthorizationToken",
-                "sts:GetServiceBearerToken",
-                "ecr-public:BatchCheckLayerAvailability",
-                "ecr-public:GetRepositoryPolicy",
-                "ecr-public:DescribeRepositories",
-                "ecr-public:DescribeRegistries",
-                "ecr-public:DescribeImages",
-                "ecr-public:DescribeImageTags",
-                "ecr-public:GetRepositoryCatalogData",
-                "ecr-public:GetRegistryCatalogData",
-                "ecr-public:InitiateLayerUpload",
-                "ecr-public:UploadLayerPart",
-                "ecr-public:CompleteLayerUpload",
-                "ecr-public:PutImage"
+                "ecr-public:*",
+                "sts:GetServiceBearerToken"
             ],
             "Resource": "*"
         }
