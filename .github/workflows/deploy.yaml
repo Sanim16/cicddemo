@@ -31,7 +31,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |-
-          terraform plan -destroy \
+          terraform plan \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
@@ -47,7 +47,8 @@ jobs:
           echo "::set-output name=web_server_public_ip::$(terraform output web_server_public_ip)"
         working-directory: ./terraform
       - name: Print the input tag to STDOUT
-        run: echo The tags are ${{ steps.set-ip.web_server_public_ip }}
+        run: echo The tag is $SERVER_PUBLIC_IP
+        # run: echo The tag is ${{ steps.set-ip.web_server_public_ip }}
         # run: echo  The tags are ${{ env.SERVER_PUBLIC_IP }}
   deploy-app:
     runs-on: ubuntu-latest
