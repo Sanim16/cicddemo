@@ -9,6 +9,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   PRIVATE_SSH_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
   PUBLIC_SSH_KEY: ${{ secrets.AWS_SSH_KEY_PUBLIC }}
+  TF_STATE_BUCKET_NAME: ms-tfstate-bucket
 
 
 jobs:
@@ -17,6 +18,52 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        #run: echo "This step will be skipped on Monday and Wednesday"
+      - name: setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+      - name: Terraform init
+        id: init
+        run: terraform init -backend-config="bucket=$TF_STATE_BUCKET_NAME" -backend-config="region=us-east-1"
+        working-directory: ./terraform
+      - name: Terraform Plan
+        id: plan
+        run: |-
+          terraform plan \
+          -var="region=us-east-1" \
+          -var="public_key=$PUBLIC_SSH_KEY" \
+          -var="private_key=$PRIVATE_SSH_KEY" \
+          -var="key_name=terraformawskey" \
+          -out=PLAN
+        working-directory: ./terraform
+      # - name: Terraform Apply
+      #   id: apply
+      #   run: terraform apply PLAN
+      #   working-directory: ./terraform
+      # - name: Set Output
+      #   id: set-ip
+      #   run: |-
+      #     echo "::set-output name=web_server_public_ip::$(terraform output web_server_public_ip)"
+      #   working-directory: ./terraform
       - name: Every time
         run: echo "This step will always run"
+  # deploy-app:
+  #   runs-on: ubuntu-latest
+  #   needs: deploy-infra
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Set IP env variable
+  #       run: echo SERVER_PUBLIC_IP=${{ needs.deploy-infra.outputs.SERVER_PUBLIC_IP }} >> $GITHUB_ENV
+  #     - name: Login to AWS ECR
+  #       id: login-ecr
+  #       uses: aws-actions/amazon-ecr-login@v1
+  #     - name: Build and Push docker image
+  #       env:
+  #         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #         REPOSITORY: example-node-app
+  #         IMAGE_TAG: ${{ github.sha }}
+  #       run: |-
+  #         docker build -t $REGISTRY/$REPOSITORY:$IMAAGE_TAG .
+  #         docker push $REGISTRY/$REPOSITORY:$IMAAGE_TAG
+  #       working-directory: ./nodeapp
