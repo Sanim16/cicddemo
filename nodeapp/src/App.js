@@ -9,9 +9,9 @@ function App() {
         <p>
         This is a CICD project that dockerises a nodejs website created with "npx create-react-app".
 
-        The code is pushed to GitHub
+        The code is pushed to GitHub, where a GitHub Actions workflow uses Terraform scripts to provision the Infrastructure on AWS.
 
-        It also uses terraform to provision infrastructure on AWS for deployment of the app.
+        The docker image is pushed to AWS ECR from where it is run on the provisioned EC2 instance.
 
         The deployment is managed by GitHub Actions
         </p>
