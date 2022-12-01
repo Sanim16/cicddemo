@@ -16,7 +16,7 @@
 
 ## Tasks:
 
-- Get access id, secret id from AWS
+- Get access id, secret id from AWS and ensure user has enough permissions to create infrastructure
 - Develop a simple nodejs app
 ```js
 npx create-react-app nodeapp
@@ -81,6 +81,7 @@ env:
     -out=PLAN
   working-directory: ./terraform
 ```
+>Amend the terraform plan command to terraform plan -destroy \ when taking down the infrastructure
 
 - Run terraform apply
 

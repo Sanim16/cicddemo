@@ -15,7 +15,6 @@ terraform {
   backend "s3" {
     key    = "terraform/remotestate" #Key to object in S3
     region = "us-east-1"
-    #shared_credentials_file = "" #use secrets from github actions for login to Aws
   }
 
 }
@@ -42,7 +41,7 @@ resource "aws_instance" "web_server" {
     timeout = "4m"
   }
   tags = {
-    "Name" = "Web Server"
+    "Name" = "EC2 Web Server"
   }
 }
 
@@ -105,7 +104,7 @@ resource "aws_security_group" "cicd-demo-sg" {
 resource "aws_iam_instance_profile" "cicddemo_ecr_profile" {
     name = "cicddemo_ecr_profile"  
     #role = aws_iam_role.role.name
-    role = "cicd_demo_policy_for_ecr"
+    role = "cicd_demo_policy_for_ecr"  #This is a preexisting role, another option is to create the role with terraform
 }
 
 # resource "aws_iam_role" "role" {
