@@ -86,7 +86,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           # host: "44.203.31.62"
-          host: $SERVER_PUBLIC_IP
+          host: ${{ env.PUBLIC_IP }}
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
           envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
