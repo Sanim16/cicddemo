@@ -31,7 +31,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |-
-          terraform plan -destroy \
+          terraform plan \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
@@ -83,8 +83,8 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
         uses: appleboy/ssh-action@master
         with:
-          host: "44.203.31.62"
-          # host: ${{ needs.deploy-infra.outputs.SERVER_PUBLIC_IP }}
+          # host: "44.203.31.62"
+          host: $needs.deploy-infra.outputs.SERVER_PUBLIC_IP
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
           envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
