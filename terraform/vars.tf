@@ -3,9 +3,9 @@ variable "AWS_REGION" {
     default = "us-east-1"  
 }
 
-variable "key_name" {} #empty to prevent uploading secrets
-variable "public_key" {} #public key used for key pair creation
-variable "private_key" {} #public key used for key pair creation
+variable "key_name" {} #use secrets from github actions to prevent uploading secrets
+variable "public_key" {} #use secrets from github actions to prevent uploading secrets
+variable "private_key" {} #use secrets from github actions to prevent uploading secrets
 
 
 variable "PROJECT_NAME" {

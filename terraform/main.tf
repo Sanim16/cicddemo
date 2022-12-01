@@ -13,19 +13,16 @@ terraform {
   ##A backend block cannot refer to named values (like input variables, locals, or data source attributes).
   
   backend "s3" {
-    bucket = "ms-tfstate-bucket" #Bucket name in S3
     key    = "terraform/remotestate" #Key to object in S3
     region = "us-east-1"
-    #shared_credentials_file = "" #use env variable from github actions for login to Aws
-    #profile = "" #profile to use #use env variable from github actions for login to Aws
+    #shared_credentials_file = "" #use secrets from github actions for login to Aws
   }
 
 }
 
 provider "aws" {
   region     = var.AWS_REGION
-  #shared_credentials_file = "" #use env variable from github actions for login to Aws
-  #profile = "" #profile to use #use env variable from github actions for login to Aws
+  #shared_credentials_file = "" #use secrets from github actions for login to Aws
 }
 
 resource "aws_instance" "web_server" {
@@ -33,7 +30,6 @@ resource "aws_instance" "web_server" {
   instance_type = "t2.micro"
   key_name = aws_key_pair.key_name.key_name
   vpc_security_group_ids = [ aws_security_group.cicd-demo-sg.id ]
-  #availability_zone = ""
   associate_public_ip_address = true
   subnet_id = aws_subnet.public-subnet-01.id
   iam_instance_profile = aws_iam_instance_profile.cicddemo_ecr_profile.name
@@ -52,7 +48,7 @@ resource "aws_instance" "web_server" {
 
 resource "aws_key_pair" "key_name" {
   key_name = var.key_name  ##"terraformawskey"
-  public_key = var.public_key  ##file("${var.PUB_KEY}")
+  public_key = var.public_key  #use secrets from github actions
 }
 
 resource "aws_security_group" "cicd-demo-sg" {
