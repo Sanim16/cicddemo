@@ -15,6 +15,14 @@ function App() {
 
         The deployment is managed by GitHub Actions
         </p>
+        <a
+          className="App-link"
+          href="https://github.com/Sanim16/cicddemo_with_terraform_on_aws"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Link to the GitHub Repo
+        </a>
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
