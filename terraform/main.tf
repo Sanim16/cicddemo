@@ -15,6 +15,7 @@ terraform {
   backend "s3" {
     key    = "terraform/remotestate" #Key to object in S3
     region = "us-east-1"
+    bucket = "ms-tfstate-bucket"
   }
 
 }
