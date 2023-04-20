@@ -31,6 +31,9 @@ jobs:
         id: init
         run: terraform init -backend-config="bucket=$TF_STATE_BUCKET_NAME" -backend-config="region=us-east-1"
         working-directory: ./terraform
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
       - name: Terraform Plan
         id: plan
         run: |-
