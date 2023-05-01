@@ -30,7 +30,7 @@ resource "aws_instance" "web_server" {
   instance_type = "t2.micro"
   key_name = aws_key_pair.key_name.key_name
   vpc_security_group_ids = [ aws_security_group.cicd-demo-sg.id ]
-  associate_public_ip_address = true
+  # associate_public_ip_address = true
   subnet_id = aws_subnet.public-subnet-01.id
   iam_instance_profile = aws_iam_instance_profile.cicddemo_ecr_profile.name
 
