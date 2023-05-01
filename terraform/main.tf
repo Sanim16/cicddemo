@@ -33,6 +33,7 @@ resource "aws_instance" "web_server" {
   # associate_public_ip_address = true
   subnet_id = aws_subnet.public-subnet-01.id
   iam_instance_profile = aws_iam_instance_profile.cicddemo_ecr_profile.name
+  ebs_optimized = true
 
   connection {
     type = "ssh"
@@ -91,6 +92,7 @@ resource "aws_security_group" "cicd-demo-sg" {
   } ]
 
   egress {
+    description = "egress to anywhere"
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
