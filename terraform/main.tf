@@ -28,6 +28,10 @@ provider "aws" {
 resource "aws_instance" "web_server" {
   ami = "ami-08c40ec9ead489470"
   instance_type = "t2.micro"
+    metadata_options {
+      http_endpoint = "enabled"
+      http_tokens = "required"
+    }
   key_name = aws_key_pair.key_name.key_name
   vpc_security_group_ids = [ aws_security_group.cicd-demo-sg.id ]
   # associate_public_ip_address = true
