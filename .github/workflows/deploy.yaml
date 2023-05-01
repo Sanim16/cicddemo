@@ -44,7 +44,7 @@ jobs:
         id: plan
         if: github.event_name == 'pull_request'
         run: |
-          terraform plan -destroy \
+          terraform plan \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
@@ -58,6 +58,16 @@ jobs:
         id: apply
         run: terraform apply PLAN
         working-directory: ./terraform
+
+
+      - name: Set color
+        id: random-color-generator
+        run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
+      - name: Get color
+
+        run: echo "The selected color is ${{ steps.random-color-generator.outputs.SELECTED_COLOR }}"
+
+
       - name: Set IP for EC2 instance
         id: set-ip
         run: echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
@@ -69,7 +79,7 @@ jobs:
       - name: Get the EC2 IP from job deploy-infra
         run: |-
           echo ${{needs.deploy-infra.outputs.EC2_PUBLIC_IP}}
-          echo "EC2_PUBLIC_IP=${{needs.deploy-infra.outputs.EC2_PUBLIC_IP}}" >> $GITHUB_ENV
+          echo "EC2_PUBLIC_IP=${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v3
       - name: Configure AWS credentials
