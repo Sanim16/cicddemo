@@ -51,7 +51,6 @@ jobs:
           -var="key_name=terraformawskey" \
           -out=PLAN
         working-directory: ./terraform
-        continue-on-error: true
 
       - name: Terraform Apply
         # Add an if clause that only runs on merge to main or if plan is successful
@@ -75,7 +74,11 @@ jobs:
 
       - name: Set IP for EC2 instance
         id: set-ip
-        run: echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
+        run: |
+          EOF=$(openssl rand -hex 8)
+          echo "web_server_public_ip<<$EOF" >> "$GITHUB_OUTPUT"
+          terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
         working-directory: ./terraform
   deploy-app:
     runs-on: ubuntu-latest
