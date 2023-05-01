@@ -39,6 +39,9 @@ resource "aws_instance" "web_server" {
   iam_instance_profile = aws_iam_instance_profile.cicddemo_ecr_profile.name
   ebs_optimized = true
   monitoring = true
+  root_block_device {
+    encrypted = true
+  }
 
   connection {
     type = "ssh"
