@@ -70,8 +70,7 @@ jobs:
 
       - name: Set IP for EC2 instance
         id: set-ip
-        # run: echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
-        run: echo "web_server_public_ip=(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
+        run: echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
   deploy-app:
     runs-on: ubuntu-latest
