@@ -38,6 +38,7 @@ resource "aws_instance" "web_server" {
   subnet_id = aws_subnet.public-subnet-01.id
   iam_instance_profile = aws_iam_instance_profile.cicddemo_ecr_profile.name
   ebs_optimized = true
+  monitoring = true
 
   connection {
     type = "ssh"
