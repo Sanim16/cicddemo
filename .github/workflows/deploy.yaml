@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       EC2_PUBLIC_IP: ${{ steps.set-ip.outputs.web_server_public_ip }}
+      EC1_PUBLIC_IP: ${{ steps.step_one.outputs.web_server_public_ip }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -58,14 +59,18 @@ jobs:
         id: apply
         run: terraform apply PLAN
         working-directory: ./terraform
-
-
-      - name: Set color
-        id: random-color-generator
-        run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
-      - name: Get color
-
-        run: echo "The selected color is ${{ steps.random-color-generator.outputs.SELECTED_COLOR }}"
+        
+      - name: Set the IP for ec2 instance
+        working-directory: ./terraform
+        id: step_one
+        run: |
+          EOF=$(openssl rand -hex 8)
+          echo "web_server_public_ip<<$EOF" >> "$GITHUB_OUTPUT"
+          terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+          
+      - name: Get IP
+        run: echo "The selected color is ${{ steps.step_one.outputs.web_server_public_ip }}"
 
 
       - name: Set IP for EC2 instance
