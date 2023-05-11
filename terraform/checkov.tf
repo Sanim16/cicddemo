@@ -37,8 +37,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "example" {
 resource "aws_kms_key" "mykey" {
   description             = "This key is used to encrypt bucket objects"
   deletion_window_in_days = 10
-  is_enabled = true
-  enable_key_rotation = true
+  is_enabled              = true
+  enable_key_rotation     = true
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "example" {
