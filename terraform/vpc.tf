@@ -36,10 +36,10 @@ resource "aws_route_table_association" "rt-1a" {
 }
 
 resource "aws_subnet" "public-subnet-01" {
-  vpc_id     = aws_vpc.cicddemo.id
-  cidr_block = "10.0.1.0/24"
-  # map_public_ip_on_launch = true
-  availability_zone = "us-east-1a"
+  vpc_id                  = aws_vpc.cicddemo.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1a"
 
   tags = {
     Name = "${var.PROJECT_NAME}-public-subnet-01"
