@@ -1,3 +1,5 @@
+---
+
 name: CICD with Terraform
 
 on:
@@ -86,7 +88,8 @@ jobs:
         working-directory: ./terraform
 
       - name: Terraform Apply
-        # Add an if clause that only runs on merge to main or if plan is successful
+        # Add an if clause that only runs on merge to 
+        # main or if plan is successful
         id: apply
         run: terraform apply PLAN
         working-directory: ./terraform
