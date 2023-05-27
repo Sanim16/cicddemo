@@ -1,8 +1,8 @@
 resource "aws_vpc" "cicddemo" {
-  cidr_block       = var.VPC_CIDR
-  instance_tenancy = "default"
+  cidr_block           = var.VPC_CIDR
+  instance_tenancy     = "default"
   enable_dns_hostnames = true
-  enable_dns_support = true
+  enable_dns_support   = true
 
   tags = {
     Name = "${var.PROJECT_NAME}-vpc"
@@ -38,7 +38,7 @@ resource "aws_route_table_association" "rt-1a" {
 resource "aws_subnet" "public-subnet-01" {
   vpc_id                  = aws_vpc.cicddemo.id
   cidr_block              = "10.0.1.0/24"
-  # map_public_ip_on_launch = true
+  map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
 
   tags = {
