@@ -6,7 +6,7 @@
 
 ## Technologies:
 - Terraform
-- Github Actions
+- GitHub Actions
 - Docker
 - Node.js
 - AWS EC2
@@ -16,7 +16,7 @@
 
 ## Tasks:
 
-- Get access id, secret id from AWS and ensure user has enough permissions to create infrastructure
+- Get access ID, secret ID from AWS and ensure user has enough permissions to create infrastructure
 - Develop a simple nodejs app
 ```js
 npx create-react-app nodeapp
@@ -43,7 +43,7 @@ CMD ["npm", "start"]
 
 ## Write CI/CD pipeline
 
-- Write Github Actions workflow: Set environment variables
+- Write GitHub Actions workflow: Set environment variables
 
 ```yml
 env:
