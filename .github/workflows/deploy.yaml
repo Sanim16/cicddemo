@@ -113,7 +113,7 @@ jobs:
           echo "${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}"
           EOF=$(openssl rand -hex 8)
           echo "EC2_PUBLIC_IP<<$EOF" >> "$GITHUB_ENV"
-          echo ${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }} >> "$GITHUB_ENV"
+          echo "${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}" >> "$GITHUB_ENV"
           echo "$EOF" >> "$GITHUB_ENV"
   
       - name: Checkout
