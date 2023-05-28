@@ -140,7 +140,7 @@ jobs:
         working-directory: ./nodeapp
 
       - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}
           username: ubuntu
