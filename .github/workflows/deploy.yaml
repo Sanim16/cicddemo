@@ -19,8 +19,6 @@ env:
   PRIVATE_SSH_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
   PUBLIC_SSH_KEY: ${{ secrets.AWS_SSH_KEY_PUBLIC }}
   TF_STATE_BUCKET_NAME: ${{ secrets.TF_STATE_BUCKET_NAME }}
-  ACTIONS_STEP_DEBUG: true
-  PORT: 22
 
 
 jobs:
@@ -105,6 +103,12 @@ jobs:
           terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
           echo "$EOF" >> "$GITHUB_OUTPUT"
         working-directory: ./terraform
+
+      - name: Echo EC2 IP address
+        run: |-
+          echo ${{ steps.set-ip.outputs.web_server_public_ip }}
+          whoami
+
   deploy-app:
     runs-on: ubuntu-latest
     needs: deploy-infra
