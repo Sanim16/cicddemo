@@ -106,7 +106,7 @@ jobs:
 
       - name: Echo EC2 IP address
         run: |-
-          echo ${{ steps.set-ip.outputs.web_server_public_ip }}
+          echo "${{ steps.set-ip.outputs.web_server_public_ip }}"
           whoami
 
   deploy-app:
