@@ -164,11 +164,11 @@ jobs:
         with:
           # The dynamic declaration of the host address is not working
           # Hence why the IP is declared as a static input.
-          host: 54.160.36.212
-          # host: ${{ env.EC2_PUBLIC_IP }}
+          # host: 54.160.36.212
+          host: ${{ env.EC2_PUBLIC_IP }}
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
-          envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
+          envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION,EC2_PUBLIC_IP
           script: |
             sudo apt update
             sudo apt install docker.io -y
