@@ -113,7 +113,7 @@ jobs:
       - name: Set IP for EC2 instance
         id: set-ip
         run: |
-          terraform output
+          terraform output web_server_public_ip
           web_server_public_ip=$(terraform output web_server_public_ip)
           echo "$web_server_public_ip" >> $GITHUB_OUTPUT
           echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
