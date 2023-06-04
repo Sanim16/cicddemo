@@ -113,10 +113,8 @@ jobs:
       - name: Set IP for EC2 instance
         id: set-ip
         run: |
-          terraform output web_server_public_ip
-          web_server_public_ip=$(terraform output web_server_public_ip)
+          terraform output web_server_public_ip | web_server_public_ip=$(</dev/stdin)
           echo "$web_server_public_ip" >> $GITHUB_OUTPUT
-          echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
         shell: bash
         # EOF=$(openssl rand -hex 8)
