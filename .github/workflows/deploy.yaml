@@ -118,6 +118,7 @@ jobs:
           echo "$web_server_public_ip" >> $GITHUB_OUTPUT
           echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
+        shell: bash
         # EOF=$(openssl rand -hex 8)
         # echo "web_server_public_ip<<$EOF" >> "$GITHUB_OUTPUT"
         # terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
