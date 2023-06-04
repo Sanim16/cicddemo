@@ -113,11 +113,12 @@ jobs:
       - name: Set IP for EC2 instance
         id: set-ip
         run: |
-          EOF=$(openssl rand -hex 8)
-          echo "web_server_public_ip<<$EOF" >> "$GITHUB_OUTPUT"
-          terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
-          echo "$EOF" >> "$GITHUB_OUTPUT"
+          echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
         working-directory: ./terraform
+        # EOF=$(openssl rand -hex 8)
+        # echo "web_server_public_ip<<$EOF" >> "$GITHUB_OUTPUT"
+        # terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
+        # echo "$EOF" >> "$GITHUB_OUTPUT"
 
   deploy-app:
     runs-on: ubuntu-latest
