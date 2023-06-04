@@ -1,8 +1,17 @@
+---
+
 name: CICD with Terraform
+
 on:
   push:
     branches:
       - main
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -13,8 +22,41 @@ env:
 
 
 jobs:
+
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.11
+      - name: Test with Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: ./terraform
+          framework: terraform
+          quiet: true
+          soft_fail: true
+          download_external_modules: true
+  
+  # lint:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Lint Code Base
+  #       uses: super-linter/super-linter@v5.0.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
   deploy-infra:
     runs-on: ubuntu-latest
+    needs: scan
     outputs:
       EC2_PUBLIC_IP: ${{ steps.set-ip.outputs.web_server_public_ip }}
     steps:
@@ -22,52 +64,93 @@ jobs:
         uses: actions/checkout@v3
       - name: setup Terraform
         uses: hashicorp/setup-terraform@v2
+        # with:
+        #   terraform_wrapper: false
+
+      - name: Config Terraform plugin cache
+        run: |
+          echo 'plugin_cache_dir="$HOME/.terraform.d/plugin-cache"' >~/.terraformrc
+          mkdir -p ~/.terraform.d/plugin-cache
+      - name: Cache Terraform
+        uses: actions/cache@v3
         with:
-          terraform_wrapper: false
+          path: |
+            ~/.terraform.d/plugin-cache
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
       - name: Terraform init
         id: init
-        run: terraform init #-backend-config="bucket=$TF_STATE_BUCKET_NAME" -backend-config="region=us-east-1"
+        run: terraform init -lock-timeout=240s #-backend-config="bucket=$TF_STATE_BUCKET_NAME" -backend-config="region=us-east-1"
         working-directory: ./terraform
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
       - name: Terraform Plan
         id: plan
-        run: |-
+        if: github.event_name == 'pull_request'
+        run: |
           terraform plan -destroy \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=terraformawskey" \
           -out=PLAN
         working-directory: ./terraform
+
       - name: Terraform Apply
+        # Add an if clause that only runs on merge to 
+        # main or if plan is successful
         id: apply
         run: terraform apply PLAN
         working-directory: ./terraform
+
+
       - name: Set IP for EC2 instance
         id: set-ip
-        run: echo "web_server_public_ip=$(terraform output web_server_public_ip)" >> $GITHUB_OUTPUT
+        run: |
+          echo "web_server_public_ip=54.160.36.212" >> "$GITHUB_OUTPUT"
         working-directory: ./terraform
+        # shell: bash
+        # EOF=$(openssl rand -hex 8)
+        # echo "web_server_public_ip<<$EOF" >> "$GITHUB_OUTPUT"
+        # terraform output web_server_public_ip >> "$GITHUB_OUTPUT"
+        # echo "$EOF" >> "$GITHUB_OUTPUT"
+
+        # second delete
+        # terraform output web_server_public_ip | read web_server_public_ip
+        # echo "$web_server_public_ip" >> $GITHUB_OUTPUT
+        # printenv
+
   deploy-app:
     runs-on: ubuntu-latest
     needs: deploy-infra
     steps:
       - name: Get the EC2 IP from job deploy-infra
-        run: |-
-          echo ${{needs.deploy-infra.outputs.EC2_PUBLIC_IP}}
-          echo "EC2_PUBLIC_IP=${{needs.deploy-infra.outputs.EC2_PUBLIC_IP}}" >> $GITHUB_ENV
+        run: |
+          echo "${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}"
+          EOF=$(openssl rand -hex 8)
+          echo "EC2_PUBLIC_IP<<$EOF" >> "$GITHUB_ENV"
+          echo "${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}" >> "$GITHUB_ENV"
+          echo "$EOF" >> "$GITHUB_ENV"
+  
       - name: Checkout
         uses: actions/checkout@v3
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+
       - name: Build and Push docker image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -77,19 +160,24 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         working-directory: ./nodeapp
+
       - name: Deploy Docker Image to EC2
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: example-node-app
           IMAGE_TAG: ${{ github.sha }}
           AWS_DEFAULT_REGION: us-east-1
+          EC2_PUBLIC_IP: 54.160.36.212
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.EC2_PUBLIC_IP }}
+          # The dynamic declaration of the host address is not working
+          # Hence why the IP is declared as a static input.
+          # host: 54.160.36.212
+          host: ${{ needs.deploy-infra.outputs.EC2_PUBLIC_IP }}
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
-          envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION
-          script: |-
+          envs: PRIVATE_SSH_KEY,REGISTRY,REPOSITORY,IMAGE_TAG,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION,EC2_PUBLIC_IP
+          script: |
             sudo apt update
             sudo apt install docker.io -y
             sudo apt install awscli -y
