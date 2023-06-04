@@ -164,7 +164,7 @@ jobs:
         with:
           # The dynamic declaration of the host address is not working
           # Hence why the IP is declared as a static input.
-          host: 34.205.85.65
+          host: 54.160.36.212
           # host: ${{ env.EC2_PUBLIC_IP }}
           username: ubuntu
           key: ${{ env.PRIVATE_SSH_KEY }}
