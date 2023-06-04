@@ -160,6 +160,7 @@ jobs:
           REPOSITORY: example-node-app
           IMAGE_TAG: ${{ github.sha }}
           AWS_DEFAULT_REGION: us-east-1
+          EC2_PUBLIC_IP: ${{ env.EC2_PUBLIC_IP }}
         uses: appleboy/ssh-action@master
         with:
           # The dynamic declaration of the host address is not working
